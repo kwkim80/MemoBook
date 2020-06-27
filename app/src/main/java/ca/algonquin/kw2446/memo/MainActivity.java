@@ -1,8 +1,10 @@
 package ca.algonquin.kw2446.memo;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,13 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ca.algonquin.kw2446.memo.adapter.MemoAdapter;
 import ca.algonquin.kw2446.memo.model.Memo;
+import ca.algonquin.kw2446.memo.persistence.MemoRepository;
 import ca.algonquin.kw2446.memo.util.VerticalSpacingItemDecorator;
 
 public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoItemClicked{
@@ -28,20 +33,27 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter adapter;
+    private MemoRepository mRepository;
 
-    FloatingActionButton fabAdd;
+    //FloatingActionButton fabAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         list=new ArrayList<>();
-        insertFakeNotes();
+        //insertFakeNotes();
 
         initialRecyclerView();
+        mRepository=new MemoRepository(this);
+        this.retrieveMemos();
+        //fabAdd=findViewById(R.id.fabAdd);
 
-        setSupportActionBar((Toolbar)findViewById(R.id.tbMemo));
+        Toolbar toolbar=(Toolbar)findViewById(R.id.tbMemo);
+        setSupportActionBar(toolbar);
+        setTitle("Memo Book");
 
-        fabAdd=findViewById(R.id.fabAdd);
+
+
 
     }
 
@@ -63,7 +75,20 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
         }
       //  adapter.notifyDataSetChanged();
     }
-
+    private void retrieveMemos() {
+        mRepository.retrieveMemosTask().observe(this, new Observer<List<Memo>>() {
+            @Override
+            public void onChanged(@Nullable List<Memo> memos) {
+                if(list.size() > 0){
+                    list.clear();
+                }
+                if(memos != null){
+                    list.addAll(memos);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
     private void initialRecyclerView(){
         recyclerView=findViewById(R.id.rvList);
         recyclerView.setHasFixedSize(true);
@@ -74,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
         recyclerView.setLayoutManager(layoutManager);
         adapter=new MemoAdapter(this,list);
         recyclerView.setAdapter(adapter);
+
+        
     }
 
     public void memoAdd(View v){
@@ -84,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
     public void deleteMemo(Memo memo){
             list.remove(memo);
             adapter.notifyDataSetChanged();
+
+            mRepository.deleteMemoTask(memo);
     }
 
     ItemTouchHelper.SimpleCallback itemTouchHelperCallback=new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {

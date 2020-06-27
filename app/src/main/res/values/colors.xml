@@ -5,11 +5,10 @@
     <color name="colorPrimaryLight">#E0B7E7</color>
     <color name="colorPrimaryFaint">#F8D7FF</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent2">#032DFA</color>
 
-    <color name="lightViloet">#C5A1CE</color>
-    <color name="mediumViloet">#B969CA</color>
-    <color name="darkViloet">#9A06B9</color>
-    <color name="lightGrey">#d9d9d9</color>
+    <color name="faintGrey">#F1F1F1</color>
+    <color name="lightGrey">#CECECE</color>
     <color name="darkGrey">#a2a2a2</color>
     <color name="black">#000</color>
     <color name="white">#fff</color>

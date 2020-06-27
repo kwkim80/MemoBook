@@ -3,23 +3,40 @@ package ca.algonquin.kw2446.memo.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.util.StringTokenizer;
 
+@Entity(tableName = "memos")
 public class Memo implements Parcelable {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
+    @ColumnInfo(name="title")
     private String title;
+    @ColumnInfo(name = "content")
     private String content;
+    @ColumnInfo(name = "category")
     private String category;
+    @ColumnInfo(name="timestamp")
     private String timestamp;
 
-    public Memo() { this("New Title",""); }
+    @Ignore
+    public Memo() { this("No Title",""); }
+    @Ignore
     public Memo(String title, String content) { this(title,content,""); }
+    @Ignore
     public Memo(String title, String content, String category) { this(title,content,category,""); }
-    public Memo(String title, String content, String category, String regDate) {
-       setTitle(title);setContent(content);setCategory(category);setTimestamp(regDate);
+
+    public Memo(String title, String content, String category, String timestamp) {
+       setTitle(title);setContent(content);setCategory(category);setTimestamp(timestamp);
     }
 
+    @Ignore
     public Memo(Memo memo) {
         this(memo.title,memo.content, memo.category,memo.timestamp);
     }
@@ -71,5 +88,16 @@ public class Memo implements Parcelable {
         dest.writeString(content);
         dest.writeString(category);
         dest.writeString(timestamp);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Memo{" +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", category='" + category + '\'' +
+                ", timestamp='" + timestamp + '\'' +
+                '}';
     }
 }

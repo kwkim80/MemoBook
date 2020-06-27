@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import ca.algonquin.kw2446.memo.model.Memo;
+import ca.algonquin.kw2446.memo.persistence.MemoRepository;
 
 
 public class NoteActivity extends AppCompatActivity implements
@@ -43,7 +43,7 @@ public class NoteActivity extends AppCompatActivity implements
     private Memo initialMemo, finalMemo;
     private GestureDetector mGestureDetector;
     private int mMode;
-   // private NoteRepository mNoteRepository;
+   private MemoRepository memoRepository;
 
 
 
@@ -214,12 +214,12 @@ public class NoteActivity extends AppCompatActivity implements
     }
 
     public void updateNote() {
-        //mNoteRepository.updateNoteTask(mNoteFinal);
+        memoRepository.updateMemoTask(finalMemo);
 
     }
 
     public void saveNewNote() {
-        //mNoteRepository.insertNoteTask(mNoteFinal);
+        memoRepository.insertMemoTask(finalMemo);
     }
 
 }

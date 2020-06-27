@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import ca.algonquin.kw2446.memo.R;
 import ca.algonquin.kw2446.memo.model.Memo;
+import ca.algonquin.kw2446.memo.util.Utility;
 
 public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
 
@@ -37,19 +38,14 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             tvTitle=itemView.findViewById(R.id.tvTitle);
             tvDate=itemView.findViewById(R.id.tvDate);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.onItemClicked(getAdapterPosition());
-                }
-            });
+            itemView.setOnClickListener((v)->context.onItemClicked(getAdapterPosition()));
 
         }
 
         public void setItem(Memo m){
             tvTitle.setText(m.getTitle());
-            tvDate.setText(m.getTimestamp());
-            // tvDate.setText(Utility.memoTitleDate(m.getRegDate()));
+            //tvDate.setText(m.getTimestamp());
+             tvDate.setText(Utility.memoTitleDate(m.getTimestamp()));
         }
     }
 

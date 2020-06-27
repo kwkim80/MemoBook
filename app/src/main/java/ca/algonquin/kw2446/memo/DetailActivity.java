@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ca.algonquin.kw2446.memo.model.Memo;
+import ca.algonquin.kw2446.memo.persistence.MemoRepository;
 import ca.algonquin.kw2446.memo.util.Utility;
 
 public class DetailActivity extends AppCompatActivity implements TextWatcher {
@@ -33,6 +35,7 @@ public class DetailActivity extends AppCompatActivity implements TextWatcher {
     private Memo initialNote, finalNote;
     private boolean edit_Mode;
     private boolean isNewMemo;
+    private MemoRepository memoRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class DetailActivity extends AppCompatActivity implements TextWatcher {
         tvTitle=findViewById(R.id.tvTitle);
         etTitle=findViewById(R.id.etTitle);
 
+        memoRepository=new MemoRepository(this);
         setMemo(getSelectedNote());
 
         ibCheck.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +114,7 @@ public class DetailActivity extends AppCompatActivity implements TextWatcher {
             finalNote=new Memo();
         }
         tvTitle.setText(initialNote.getTitle());
-        etTitle.setText(initialNote.getTitle());
+//        etTitle.setHint("Enter New Title");
         letContent.setText(initialNote.getContent());
         changeMode(edit_Mode);
     }
@@ -125,7 +129,47 @@ public class DetailActivity extends AppCompatActivity implements TextWatcher {
 
             enableContentInteraction();
 
+            if(!isEditMode){
+                String temp = letContent.getText().toString().trim();
+                temp = temp.replace("\n", "").replace(" ", "");
+                if(temp.length() > 0){
+                    String title=etTitle.getText().toString().trim();
+                    finalNote.setTitle(title.isEmpty()?"No Title":title);
+                    finalNote.setContent(letContent.getText().toString());
+                    String timestamp = Utility.getDateTime();
+                    finalNote.setCategory("");
+                    finalNote.setTimestamp(timestamp);
+
+                    Log.d(TAG, "disableEditMode: initial: " + initialNote.toString());
+                    Log.d(TAG, "disableEditMode: final: " + finalNote.toString());
+
+                    // If the note was altered, save it.
+                    if(!finalNote.getContent().equals(initialNote.getContent())
+                            || !finalNote.getTitle().equals(initialNote.getTitle())){
+                        Log.d(TAG, "disableEditMode: called?");
+                        saveChanges();
+                    }
+                }
+            }
+
     }
+
+    private void saveChanges(){
+        if(isNewMemo){
+            saveNewMemo();
+        }else{
+            updateMemo();
+        }
+    }
+
+    public void updateMemo() {
+        memoRepository.updateMemoTask(finalNote);
+    }
+
+    public void saveNewMemo() {
+         memoRepository.insertMemoTask(finalNote);
+    }
+
     private void enableContentInteraction( ){
         letContent.setKeyListener(edit_Mode?new EditText(this).getKeyListener():null);
         letContent.setFocusable(edit_Mode);

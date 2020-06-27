@@ -16,7 +16,7 @@ public class Utility {
     public static String memoTitleDate(String strDate){
 
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat resultFormat = new SimpleDateFormat("MM yyyy");
+        SimpleDateFormat resultFormat = new SimpleDateFormat("MMM dd yyyy");
 
 
         String result="";
