@@ -8,8 +8,10 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter adapter;
     private MemoRepository mRepository;
+    private SwipeRefreshLayout sRefresh;
 
     //FloatingActionButton fabAdd;
     @Override
@@ -52,7 +55,16 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
         setSupportActionBar(toolbar);
         setTitle("Memo Book");
 
-
+        sRefresh=findViewById(R.id.sRefresh);
+        sRefresh.setColorSchemeColors(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
+        sRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                sRefresh.setRefreshing(true);
+                retrieveMemos();
+                sRefresh.setRefreshing(false);
+            }
+        });
 
 
     }
@@ -76,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
       //  adapter.notifyDataSetChanged();
     }
     private void retrieveMemos() {
+
         mRepository.retrieveMemosTask().observe(this, new Observer<List<Memo>>() {
             @Override
             public void onChanged(@Nullable List<Memo> memos) {
@@ -88,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
                 adapter.notifyDataSetChanged();
             }
         });
+
     }
     private void initialRecyclerView(){
         recyclerView=findViewById(R.id.rvList);
