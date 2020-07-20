@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements MemoAdapter.MemoI
     private static final String TAG = "MainActivity";
 
     ArrayList<Memo> list;
-
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter adapter;
